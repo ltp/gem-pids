@@ -1,10 +1,10 @@
-#require "pids/version"
+require "pids/version"
 require 'savon'
-require 'pids/route'
+#require 'pids/route'
 
-#module Pids
+module Pids
 
-  class Pids
+  class Client
     attr_accessor :client_guid, :client_type, :client_version, :client_webservice_version
 
     def initialise( params = {})
@@ -42,4 +42,4 @@ require 'pids/route'
     end
   end
       
-#end
+end
