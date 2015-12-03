@@ -14,6 +14,7 @@ module Pids
       @client_version = params[:client_version] || '0.0.1'
       @client_webservice_version = params[:client_webservice_version] || '6.4.0.0'
       @routes = []
+      @destinations = []
 
       @client = Savon.client(
         wsdl: 'http://ws.tramtracker.com.au/pidsservice/pids.asmx?WSDL',
@@ -29,20 +30,8 @@ module Pids
       )
     end
 
-    def get_main_routes
-      response = @client.call(:get_main_routes)
-      routes = response.body[:get_main_routes_response][:get_main_routes_result][:diffgram][:document_element][:list_of_non_sub_routes]
-      routes.each do |route|
-        @routes.push(route[:route_no])
-      end
-
-      @routes
-    end
-
-    def get_destinations_for_all_routes
-      @client.call(:get_destinations_for_all_routes)
-    end
-      
+    # This method is needed because all other API methods require a GUID
+    # So we have this one off method that does not require a GUID to get a GUID.
     def get_client_guid
       client = Savon.client(
       	wsdl: 'http://ws.tramtracker.com.au/pidsservice/pids.asmx?WSDL',
@@ -57,6 +46,33 @@ module Pids
       )
       client.call(:get_new_client_guid).body[:get_new_client_guid_response][:get_new_client_guid_result]
     end
+
+    def get_main_routes
+      response = @client.call(:get_main_routes)
+      routes = response.body[:get_main_routes_response][:get_main_routes_result][:diffgram][:document_element][:list_of_non_sub_routes]
+
+      routes.each do |route|
+        @routes.push(route[:route_no])
+      end
+
+      #@client.call(:get_main_routes).body[:get_main_routes_response][:get_main_routes_result][:diffgram][:document_element][:list_of_non_sub_routes].each do |route|
+      #  @routes.push(route[:route_no])
+      #end
+
+      @routes
+    end
+
+    def get_destinations_for_all_routes
+      response = @client.call(:get_destinations_for_all_routes)
+      dests = response.body[:get_destinations_for_all_routes_response][:get_destinations_for_all_routes_result][:diffgram][:document_element][:list_of_destinations_for_all_routes]
+
+      dests.each do |dest|
+        @destinations.push({"route_no" => dest[:route_no], "up_stop" => dest[:up_stop], "destination" => dest[:destination]})
+      end
+
+      @destinations
+    end
+      
   end
       
 end
