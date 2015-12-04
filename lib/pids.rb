@@ -88,7 +88,7 @@ module Pids
     end
 
     methods = {
-      'route_summaries' => {
+      'get_route_summaries' => {
         'elem' => 'route_summaries',
       }
     }
@@ -96,10 +96,10 @@ module Pids
     d1 = 'diffgram'.to_sym
     d2 = 'document_element'.to_sym
 
-    ['get_route_summaries'].each do |m|
-      define_method m do
-      @client.call(m.to_sym)
-      .body["#{m}_response".to_sym]["#{m}_result".to_sym][d1][d2][:route_summaries]
+    methods.keys.each do |m|
+      define_method (m) do
+        @client.call(m.to_sym)
+        .body["#{m}_response".to_sym]["#{m}_result".to_sym][d1][d2][ methods["#{m}"]["elem"].to_sym ]
       end
     end
 
