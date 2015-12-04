@@ -87,32 +87,42 @@ module Pids
       @destinations
     end
 
-    methods = {
-      'get_route_summaries' => {
-        'elem' => 'route_summaries',
-      }
-    }
+#    methods = {
+#      'get_route_summaries' => {
+#        'elem' => 'route_summaries',
+#      }
+#    }
+#
+#    d1 = 'diffgram'.to_sym
+#    d2 = 'document_element'.to_sym
+#
+#    methods.keys.each do |m|
+#      define_method (m) do
+#        @client.call(m.to_sym)
+#        .body["#{m}_response".to_sym]["#{m}_result".to_sym][d1][d2][ methods["#{m}"]["elem"].to_sym ]
+#      end
+#    end
 
-    d1 = 'diffgram'.to_sym
-    d2 = 'document_element'.to_sym
+    def get_route_summaries
+      k1 = "#{__method__}_response".to_sym
+      k2 = "#{__method__}_result".to_sym
+      k3 = "#{__method__}".sub(/^get_/, '').to_sym
 
-    methods.keys.each do |m|
-      define_method (m) do
-        @client.call(m.to_sym)
-        .body["#{m}_response".to_sym]["#{m}_result".to_sym][d1][d2][ methods["#{m}"]["elem"].to_sym ]
-      end
-    end
-
-    def __get_route_summaries
-      @client.call(:get_route_summaries)
-        .body[:get_route_summaries_response]\
-             [:get_route_summaries_result]\
-             [:diffgram]\
-             [:document_element]\
-             [:route_summaries]
+      @client.call("#{__method__}".to_sym)
+        .body[k1][k2][:diffgram][:document_element][k3]
         .each do |route|
           @routes.push(Pids::Route.new(route[:route_no], route[:headboard_route_no]))
-        end
+      end
+
+#      @client.call(:get_route_summaries)
+#        .body[:get_route_summaries_response]\
+#             [:get_route_summaries_result]\
+#             [:diffgram]\
+#             [:document_element]\
+#             [:route_summaries]
+#        .each do |route|
+#          @routes.push(Pids::Route.new(route[:route_no], route[:headboard_route_no]))
+#        end
 
       @routes
     end
