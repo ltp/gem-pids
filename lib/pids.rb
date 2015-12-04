@@ -87,12 +87,19 @@ module Pids
       @destinations
     end
 
-    #methods = 
+    methods = {
+      'route_summaries' => {
+        'elem' => 'route_summaries',
+      }
+    }
+
+    d1 = 'diffgram'.to_sym
+    d2 = 'document_element'.to_sym
 
     ['get_route_summaries'].each do |m|
       define_method m do
       @client.call(m.to_sym)
-      .body["#{m}_response".to_sym]["#{m}_result".to_sym][:diffgram][:document_element][:route_summaries]
+      .body["#{m}_response".to_sym]["#{m}_result".to_sym][d1][d2][:route_summaries]
       end
     end
 
