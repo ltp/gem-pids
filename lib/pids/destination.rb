@@ -1,7 +1,7 @@
 module Pids
 
   class Destination
-    attr_reader :route_no, :up_stop, :deatination
+    attr_reader :route_no, :up_stop, :destination
     
     def initialize( route_no, up_stop, destination )
       @route_no = route_no
