@@ -87,6 +87,25 @@ module Pids
       @destinations
     end
 
+    def get_route_summaries
+      @client.call(:get_route_summaries)
+        .body[:get_route_summaries_response]\
+             [:get_route_summaries_result]\
+             [:diffgram]\
+             [:document_element]\
+             [:route_summaries]
+        .each do |route|
+          p route
+          @routes.push(Pids::Route.new(
+                                      route[:route_no],
+                                      route[:headboard_route_no]
+                                      )
+                      )
+        end
+
+      @routes
+    end
+
 #    methods = {
 #      'get_route_summaries' => {
 #        'elem' => 'route_summaries',
@@ -102,18 +121,18 @@ module Pids
 #        .body["#{m}_response".to_sym]["#{m}_result".to_sym][d1][d2][ methods["#{m}"]["elem"].to_sym ]
 #      end
 #    end
-
-    def get_route_summaries
-      k1 = "#{__method__}_response".to_sym
-      k2 = "#{__method__}_result".to_sym
-      k3 = "#{__method__}".sub(/^get_/, '').to_sym
-
-      @client.call("#{__method__}".to_sym)
-        .body[k1][k2][:diffgram][:document_element][k3]
-        .each do |route|
-          @routes.push(Pids::Route.new(route[:route_no], route[:headboard_route_no]))
-      end
-
+#
+#    def get_route_summaries
+#      k1 = "#{__method__}_response".to_sym
+#      k2 = "#{__method__}_result".to_sym
+#      k3 = "#{__method__}".sub(/^get_/, '').to_sym
+#
+#      @client.call("#{__method__}".to_sym)
+#        .body[k1][k2][:diffgram][:document_element][k3]
+#        .each do |route|
+#          @routes.push(Pids::Route.new(route[:route_no], route[:headboard_route_no]))
+#      end
+#
 #      @client.call(:get_route_summaries)
 #        .body[:get_route_summaries_response]\
 #             [:get_route_summaries_result]\
@@ -123,9 +142,6 @@ module Pids
 #        .each do |route|
 #          @routes.push(Pids::Route.new(route[:route_no], route[:headboard_route_no]))
 #        end
-
-      @routes
-    end
 
     def get_stop_information(stop_id)
       response = @client.call(:get_stop_information)
