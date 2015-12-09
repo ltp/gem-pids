@@ -1,7 +1,9 @@
 require "pids/version"
 require "pids/route"
+require "pids/route_summary"
 require 'savon'
 require 'pids/destination'
+require 'pids/route_destination'
 
 module Pids
 
@@ -11,14 +13,14 @@ module Pids
                   :client_version,
                   :client_webservice_version,
                   :route_numbers,
-                  :routes
+                  :route_summaries
 
     def initialize( params = {})
       @client_guid = params[:client_guid] || get_client_guid
       @client_type = params[:client_type] || 'WEBPID'
       @client_version = params[:client_version] || '0.0.1'
       @client_webservice_version = params[:client_webservice_version] || '6.4.0.0'
-      @routes = []
+      @route_summaries = []
       @route_numbers = []
       @destinations = []
 
@@ -95,15 +97,38 @@ module Pids
              [:document_element]\
              [:route_summaries]
         .each do |route|
-          p route
-          @routes.push(Pids::Route.new(
+          @routes_summaries.push(Pids::RouteSummary.new(
                                       route[:route_no],
-                                      route[:headboard_route_no]
+                                      route[:headboard_route_no],
+                                      route[:internal_route_no],
+                                      route[:is_main_route],
+                                      route[:main_route_no],
+                                      route[:description],
+                                      route[:up_destination],
+                                      route[:down_destination],
+                                      route[:has_low_floow],
+                                      route[:last_modified]
                                       )
                       )
         end
 
-      @routes
+      @routes_summaries
+    end
+
+    def get_destinations_for_route( route_no )
+      response = @client.call(:get_destinations_for_route, message: { routeNo: route_no })
+        .body[:get_destinations_for_route_response]\
+             [:get_destinations_for_route_result]\
+             [:diffgram]\
+             [:document_element]\
+             [:route_destinations]
+
+      up_destination = response[:up_destination]
+      down_destination = response[:down_destination]
+
+      dest = Pids::RouteDestination.new( up_destination, down_destination )
+      dest
+
     end
 
 #    methods = {
