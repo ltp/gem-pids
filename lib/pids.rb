@@ -155,6 +155,22 @@ module Pids
       stops
     end
 
+    def get_main_routes_for_stop(stop_no)
+      routes = []
+
+      @client.call(:get_main_routes_for_stop, message: { stopNo: stop_no } )
+        .body[:get_main_routes_for_stop_response]\
+             [:get_main_routes_for_stop_result]\
+             [:diffgram]\
+             [:document_element]\
+             [:list_of_main_routes_at_stop]
+        .each do |route|
+          routes.push(route[:route_no])
+        end
+
+      routes
+    end
+
 #    methods = {
 #      'get_route_summaries' => {
 #        'elem' => 'route_summaries',
