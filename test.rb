@@ -20,7 +20,7 @@ client = Savon.client(
 #  endpoint "http://ws.tramtracker.com.au/pidsservice/pids.asmx"
 #  namespace "http://www.yarratrams.com.au/pidsservice/"
 #end
-#puts client.operations
+puts client.operations
 # => [:find_user, :list_users]
 
 # call the 'findUser' operation

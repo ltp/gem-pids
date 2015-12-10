@@ -98,7 +98,7 @@ module Pids
              [:document_element]\
              [:route_summaries]
         .each do |route|
-          @routes_summaries.push(Pids::RouteSummary.new(
+          @route_summaries.push(Pids::RouteSummary.new(
                                       route[:route_no],
                                       route[:headboard_route_no],
                                       route[:internal_route_no],
@@ -113,7 +113,7 @@ module Pids
                       )
         end
 
-      @routes_summaries
+      @route_summaries
     end
 
     def get_destinations_for_route( route_no )
@@ -169,6 +169,29 @@ module Pids
         end
 
       routes
+    end
+
+#
+# get_list_of_routes
+#   -> route_no
+#     -> get_list_of_stops_for_route( route_no )
+#       -> stop_no
+#         -> get_next_predicted_routes_collection( stop_no, route_no )
+#           -> vehicle_no
+#             -> get_next_predicted_arrival_time_at_stops_for_tram_no( vehicle_no )
+#
+    def get_next_predicted_arrival_time_at_stops_for_tram_no(tram_no)
+
+      @client.call(:get_next_predicted_arrival_time_at_stops_for_tram_no, message: { tramNo: tram_no } )
+        .body
+
+    end
+
+    def get_next_predicted_routes_collection(stop_no, route_no, low_floor=false)
+    
+      @client.call(:get_next_predicted_routes_collection, message: { stopNo: stop_no, routeNo: route_no, lowFloor: low_floor } )
+        .body
+
     end
 
 #    methods = {
