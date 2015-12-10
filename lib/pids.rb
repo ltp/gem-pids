@@ -3,6 +3,7 @@ require "pids/route"
 require "pids/route_summary"
 require 'savon'
 require 'pids/destination'
+require 'pids/listed_stop'
 require 'pids/route_destination'
 
 module Pids
@@ -131,6 +132,29 @@ module Pids
 
     end
 
+    def get_list_of_stops_by_route_no_and_direction(route_no, is_up_direction=true)
+      stops = []
+      @client.call(:get_list_of_stops_by_route_no_and_direction, 
+                    message: { routeNo: route_no, isUpDirection: is_up_direction }
+                  )
+        .body[:get_list_of_stops_by_route_no_and_direction_response]\
+             [:get_list_of_stops_by_route_no_and_direction_result]\
+             [:diffgram]\
+             [:document_element]\
+             [:s]
+        .each do |stop|
+          stops.push(Pids::ListedStop.new(stop[:tid],
+                                          stop[:name],
+                                          stop[:description],
+                                          stop[:latitude],
+                                          stop[:longitude],
+                                          stop[:suburb_name])
+                   )
+        end
+
+      stops
+    end
+
 #    methods = {
 #      'get_route_summaries' => {
 #        'elem' => 'route_summaries',
@@ -170,11 +194,6 @@ module Pids
 
     def get_stop_information(stop_id)
       response = @client.call(:get_stop_information)
-    end
-
-    def get_list_of_stops_by_route_no_and_direction
-      response = @client.call(:get_list_of_stops_by_route_no_and_direction).body
-      response
     end
 
   end
