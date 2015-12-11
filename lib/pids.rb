@@ -182,8 +182,21 @@ module Pids
 #
     def get_next_predicted_arrival_time_at_stops_for_tram_no(tram_no)
 
-      @client.call(:get_next_predicted_arrival_time_at_stops_for_tram_no, message: { tramNo: tram_no } )
-        .body
+      res = @client.call( :get_next_predicted_arrival_time_at_stops_for_tram_no, 
+                          message: { tramNo: tram_no } 
+                        )
+        .body[:get_next_predicted_arrival_time_at_stops_for_tram_no_response]\
+             [:get_next_predicted_arrival_time_at_stops_for_tram_no_result]\
+             [:diffgram]\
+             [:new_data_set]
+
+    data = Pids::PredictedArrivalTimeData.new(res)
+
+    data
+#                  )
+#        .body[:get_next_predicted_arrival_time_at_stops_for_tram_no_response]\
+#             [:get_next_predicted_arrival_time_at_stops_for_tram_no_result]\
+#             [:document_element]\
 
     end
 
