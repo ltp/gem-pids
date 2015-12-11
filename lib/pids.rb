@@ -5,6 +5,8 @@ require 'savon'
 require 'pids/destination'
 require 'pids/listed_stop'
 require 'pids/route_destination'
+require 'pids/predicted_arrival_time_data'
+require 'pids/predicted_stop_detail'
 
 module Pids
 
