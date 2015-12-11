@@ -269,3 +269,4 @@ end
 #get_route_stops_by_route
 #get_stops_and_routes_updates_since
 #get_new_client_guid
+#gem build pids.gemspec && sudo gem install pids-0.0.0.gem
