@@ -173,6 +173,14 @@ module Pids
       routes
     end
 
+    def get_route_stops_by_route(route_no, is_up_direction=true)
+        stops = []
+        @client.call(:get_route_stops_by_route,
+                      message: { routeNo: route_no, isUpDirection: is_up_direction }
+                    )
+          .body
+    end
+
 #
 # get_list_of_routes
 #   -> route_no
@@ -182,7 +190,8 @@ module Pids
 #           -> vehicle_no
 #             -> get_next_predicted_arrival_time_at_stops_for_tram_no( vehicle_no )
 #
-# pids
+# pids.route( 1 ).stop( 1 ).next_predicted_arrival_time
+# pids.get_next_predicted_arrival_time_at_stops_for_tram_no( 300 )
 #
     def get_next_predicted_arrival_time_at_stops_for_tram_no(tram_no)
 
@@ -197,10 +206,6 @@ module Pids
     data = Pids::PredictedArrivalTimeData.new(res)
 
     data
-#                  )
-#        .body[:get_next_predicted_arrival_time_at_stops_for_tram_no_response]\
-#             [:get_next_predicted_arrival_time_at_stops_for_tram_no_result]\
-#             [:document_element]\
 
     end
 
