@@ -55,27 +55,31 @@ module Pids
           }
         },
       )
-      client.call(:get_new_client_guid).
-        body[:get_new_client_guid_response][:get_new_client_guid_result]
+
+      client
+        .call(:get_new_client_guid)
+        .body[:get_new_client_guid_response]\
+             [:get_new_client_guid_result]
     end
 
     def get_main_routes
-      response = @client.call(:get_main_routes)
-      routes = response.body[:get_main_routes_response]\
-                            [:get_main_routes_result]\
-                            [:diffgram]\
-                            [:document_element]\
-                            [:list_of_non_sub_routes]
-
-      routes.each do |route|
-        @route_numbers.push(route[:route_no])
-      end
+      @client
+        .call(:get_main_routes)
+        .body[:get_main_routes_response]\
+             [:get_main_routes_result]\
+             [:diffgram]\
+             [:document_element]\
+             [:list_of_non_sub_routes]
+        .each do |route|
+          @route_numbers.push(route[:route_no])
+        end
 
       @route_numbers
     end
 
     def get_destinations_for_all_routes
-      @client.call(:get_destinations_for_all_routes)
+      @client
+        .call(:get_destinations_for_all_routes)
         .body[:get_destinations_for_all_routes_response]\
              [:get_destinations_for_all_routes_result]\
              [:diffgram]\
@@ -83,17 +87,19 @@ module Pids
              [:list_of_destinations_for_all_routes]
         .each do |dest|
           @destinations.push(Pids::Destination.new(
-                                               dest[:route_no],
-                                               dest[:up_stop],
-                                               dest[:destination] 
-                                             ))
+            dest[:route_no],
+            dest[:up_stop],
+            dest[:destination] 
+            )
+          )
         end
 
       @destinations
     end
 
     def get_route_summaries
-      @client.call(:get_route_summaries)
+      @client
+        .call(:get_route_summaries)
         .body[:get_route_summaries_response]\
              [:get_route_summaries_result]\
              [:diffgram]\
@@ -101,25 +107,26 @@ module Pids
              [:route_summaries]
         .each do |route|
           @route_summaries.push(Pids::RouteSummary.new(
-                                      route[:route_no],
-                                      route[:headboard_route_no],
-                                      route[:internal_route_no],
-                                      route[:is_main_route],
-                                      route[:main_route_no],
-                                      route[:description],
-                                      route[:up_destination],
-                                      route[:down_destination],
-                                      route[:has_low_floow],
-                                      route[:last_modified]
-                                      )
-                      )
+            route[:route_no],
+            route[:headboard_route_no],
+            route[:internal_route_no],
+            route[:is_main_route],
+            route[:main_route_no],
+            route[:description],
+            route[:up_destination],
+            route[:down_destination],
+            route[:has_low_floow],
+            route[:last_modified]
+            )
+          )
         end
 
       @route_summaries
     end
 
     def get_destinations_for_route( route_no )
-      response = @client.call(:get_destinations_for_route, message: { routeNo: route_no })
+      response = @client
+        .call(:get_destinations_for_route, message: { routeNo: route_no })
         .body[:get_destinations_for_route_response]\
              [:get_destinations_for_route_result]\
              [:diffgram]\
@@ -129,29 +136,31 @@ module Pids
       up_destination = response[:up_destination]
       down_destination = response[:down_destination]
 
-      dest = Pids::RouteDestination.new( up_destination, down_destination )
+      dest = Pids::RouteDestination.new(up_destination, down_destination)
       dest
 
     end
 
     def get_list_of_stops_by_route_no_and_direction(route_no, is_up_direction=true)
       stops = []
-      @client.call(:get_list_of_stops_by_route_no_and_direction, 
-                    message: { routeNo: route_no, isUpDirection: is_up_direction }
-                  )
+      @client
+        .call(:get_list_of_stops_by_route_no_and_direction, 
+              message: { routeNo: route_no, isUpDirection: is_up_direction })
         .body[:get_list_of_stops_by_route_no_and_direction_response]\
              [:get_list_of_stops_by_route_no_and_direction_result]\
              [:diffgram]\
              [:document_element]\
              [:s]
         .each do |stop|
-          stops.push(Pids::ListedStop.new(stop[:tid],
-                                          stop[:name],
-                                          stop[:description],
-                                          stop[:latitude],
-                                          stop[:longitude],
-                                          stop[:suburb_name])
-                   )
+          stops.push(Pids::ListedStop.new(
+            stop[:tid],
+            stop[:name],
+            stop[:description],
+            stop[:latitude],
+            stop[:longitude],
+            stop[:suburb_name]
+            )
+          )
         end
 
       stops
@@ -160,7 +169,8 @@ module Pids
     def get_main_routes_for_stop(stop_no)
       routes = []
 
-      @client.call(:get_main_routes_for_stop, message: { stopNo: stop_no } )
+      @client
+        .call(:get_main_routes_for_stop, message: { stopNo: stop_no })
         .body[:get_main_routes_for_stop_response]\
              [:get_main_routes_for_stop_result]\
              [:diffgram]\
@@ -175,9 +185,13 @@ module Pids
 
     def get_route_stops_by_route(route_no, is_up_direction=true)
         stops = []
-        @client.call(:get_route_stops_by_route,
-                      message: { routeNo: route_no, isUpDirection: is_up_direction }
-                    )
+        @client
+          .call(:get_route_stops_by_route,
+                message: { 
+                  routeNo: route_no, 
+                  isUpDirection: is_up_direction 
+                }
+          )
           .body
     end
 
@@ -195,9 +209,10 @@ module Pids
 #
     def get_next_predicted_arrival_time_at_stops_for_tram_no(tram_no)
 
-      res = @client.call( :get_next_predicted_arrival_time_at_stops_for_tram_no, 
-                          message: { tramNo: tram_no } 
-                        )
+      res = @client
+        .call(:get_next_predicted_arrival_time_at_stops_for_tram_no, 
+              message: { tramNo: tram_no } 
+        )
         .body[:get_next_predicted_arrival_time_at_stops_for_tram_no_response]\
              [:get_next_predicted_arrival_time_at_stops_for_tram_no_result]\
              [:diffgram]\
@@ -211,7 +226,14 @@ module Pids
 
     def get_next_predicted_routes_collection(stop_no, route_no, low_floor=false)
     
-      @client.call(:get_next_predicted_routes_collection, message: { stopNo: stop_no, routeNo: route_no, lowFloor: low_floor } )
+      @client
+        .call(:get_next_predicted_routes_collection, 
+          message: { 
+            stopNo: stop_no, routeNo: 
+            route_no, 
+            lowFloor: low_floor 
+          } 
+        )
         .body
 
     end
