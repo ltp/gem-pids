@@ -1,6 +1,6 @@
-require "pids/version"
-require "pids/route"
-require "pids/route_summary"
+require 'pids/version'
+require 'pids/route'
+require 'pids/route_summary'
 require 'savon'
 require 'pids/destination'
 require 'pids/listed_stop'
@@ -8,9 +8,15 @@ require 'pids/route_destination'
 require 'pids/predicted_arrival_time_data'
 require 'pids/predicted_stop_detail'
 
+# @author Luke Poskitt
+
 module Pids
 
   class Client
+    # Create a new pids client
+    # @param client_guid [String] a GUID uniquely identifying the client, if 
+    #   this parameter is not provided, the a new GUID will be generated automatically.
+    # @param client_type [String] the 
     attr_accessor :client_guid,
                   :client_type,
                   :client_version,
