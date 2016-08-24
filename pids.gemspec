@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Luke Poskitt"]
   spec.email         = ["luke.poskitt@gmail.com"]
 
-  spec.summary       = "Gem for PIDS tramTRACKER Web Service."
-  spec.description   = "Gem for PIDS tramTRACKER Web Service."
+  spec.summary       = %q{PIDS tramTRACKER Web Service.}
+  spec.description   = %q{Gem for PIDS tramTRACKER Web Service.}
   spec.homepage      = "https://github.com/ltp/gem-pids"
   spec.license       = "MIT"
 
